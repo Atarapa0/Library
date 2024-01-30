@@ -653,7 +653,7 @@ namespace LibaryProje
                     {
 
                         string queryString = "SELECT Borrewed FROM book WHERE BorrewedID = @BorrewedID GROUP BY Borrewed";
-                        comd = new SQLiteCommand(queryString, connt);//Buradaki sql sorgusunda ödünç alınmış kitap sayısını bulmak için kullanırız.ve bunu int j değişkenine atarız.
+                        comd = new SQLiteCommand(queryString, connt);//Buradaki sql sorgusunda ödünç alınmış kitap sayısını bulmak için kullanırız.ve bunu int j değişkenine atarız. J değişkenini 655. satırdaki if için önemli bir değişken.
                         comd.Parameters.AddWithValue("@BorrewedID", borrewedID);
                         int j = 0;
                         reader = comd.ExecuteReader();
