@@ -572,10 +572,10 @@ namespace LibaryProje
                     Console.WriteLine("\n\nThe book could not be borrowed. \nIncorrect ISBN number\n");
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 
-                Console.WriteLine("\n\nThe entered character is invalid...\n" + ex.Message);
+                Console.WriteLine("\n\nThe entered character is invalid...\n" + "İnput string is not in the correct format");
             }
             finally
             {
