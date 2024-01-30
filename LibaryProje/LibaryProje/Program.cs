@@ -28,7 +28,7 @@ namespace LibaryProje
     
     class Library
     {
-        SQLiteConnection connt = new SQLiteConnection("Data Source=.\\LibraryDB.db;Versiyon=3");
+        SQLiteConnection connt = new SQLiteConnection("Data Source=.\\LibraryDB.db;Versiyon=3");//SqlLite databaase'e bağladık.
         SQLiteCommand comd;
         SQLiteDataReader reader;
         
@@ -48,7 +48,7 @@ namespace LibaryProje
                 "7-) Return the borrowed book\n" +
                 "8-) Exit the program.\n");
 
-            if (int.TryParse(Console.ReadLine(), out s))// ifi içindeki ifadeye bir çok yerde görebilirsiniz bunu anlamı girilen değerin sayıl olup olmadığını kontrol ederiz. Program konsolda olduğu için her türlü olasılığı düşünmek zorundayız.
+            if (int.TryParse(Console.ReadLine(), out s))// if'in içindeki ifadeye bir çok yerde görebilirsiniz bunu anlamı girilen değerin sayıl olup olmadığını kontrol ederiz. Program konsolda olduğu için her türlü olasılığı düşünmek zorundayız.
             {
                 selectionControl(s);
             }
@@ -303,7 +303,7 @@ namespace LibaryProje
                         $"\n------------------------------------\n");
                 i++;
                 }
-                if(i==0)
+                if(i==0) //bu if'in içinde i 0 a eşit olursa (yukarıdaki sql sorgusu boş oldugu zaman whilenin içine hiç girmediği zaman) ödünç alınmış kitap olmadığını kullanıcıya bildirmek için gereklidir. 
                 Console.WriteLine("\nNo borrowed books");
                 comd.Cancel();
             connt.Close();
@@ -338,7 +338,7 @@ namespace LibaryProje
             }
 
         }//okey
-        public void displayExpiredBooks()//Ödünç alınmış kitapların süresi geçmiş olan kitapları göruntulemeyi sağlayan fponksiyondur. 
+        public void displayExpiredBooks()//Ödünç alınmış kitapların süresi geçmiş olan kitapları göruntulemeyi sağlayan fonksiyondur. 
         {
             
             try
@@ -474,7 +474,7 @@ namespace LibaryProje
                         default:
                             Console.Clear();
                             Console.WriteLine("\x1b[3J");
-                            Console.WriteLine("\nThe entered value is invalid, please try again...");
+                            Console.WriteLine("The entered value is invalid, please try again...\n\n");
                             searchABook();
                             break;
                             
@@ -532,7 +532,7 @@ namespace LibaryProje
                 }
             }
                
-        }//okey
+        }
         public void borrewABook()// veri tabanından kitap ödünç alma işlevini sağlayan foksiyondur.
         {
            
@@ -558,7 +558,7 @@ namespace LibaryProje
                 }
                 reader.Close();
                 Console.WriteLine("----------------------------\nEnter the ISBN of the book you want to borrow");
-                long check = Convert.ToInt64(Console.ReadLine());
+                long check = Convert.ToInt64(Console.ReadLine());//burada kitabın ISBN numarası vasıtasıyla kitabı ödünç aldığımız zaman kopya sayısı azaltıp ,ödünç alınan kitap sayısını attırıp ve kitabı aldığımız tarıh ve ne zaman bırakmamız gereken tarihi veri tabanına kaydederiz.
                 comd = new SQLiteCommand("update book set Copies=(Copies-1), Borrewed=(Borrewed+1) ,borrewedTime =@TimeDate,TimeToReturn=@Timetoreturn where  Copies>0 and ISBN=@Check", connt);
                 comd.Parameters.AddWithValue("@TimeDate", TimeDate);
                 comd.Parameters.AddWithValue("@Timetoreturn", Timetoreturn);
@@ -653,7 +653,7 @@ namespace LibaryProje
                     {
 
                         string queryString = "SELECT Borrewed FROM book WHERE BorrewedID = @BorrewedID GROUP BY Borrewed";
-                        comd = new SQLiteCommand(queryString, connt);
+                        comd = new SQLiteCommand(queryString, connt);//Buradaki sql sorgusunda ödünç alınmış kitap sayısını bulmak için kullanırız.ve bunu int j değişkenine atarız.
                         comd.Parameters.AddWithValue("@BorrewedID", borrewedID);
                         int j = 0;
                         reader = comd.ExecuteReader();
@@ -662,9 +662,9 @@ namespace LibaryProje
                             j = Convert.ToInt32(reader["Borrewed"]);
                             
                         }
-                        if (j == 1)
+                        if (j == 1)// j Değişkenine atamamızın sebebi eğer Borrewed sayısı 1 ise tarıhleri null değerine cekmmeiz lazım ama borrewed sayısı 1 den fazla ise sadece tarihleri güncellememiz gerekir. Buradaki if de güncellemeleri yapmatayız.
                         {
-                            comd = new SQLiteCommand("update book set Copies=(Copies+1), Borrewed=(Borrewed-1),BorrewedTime=@BorrewedTime,TimeToReturn=@TimeToReturn where BorrewedID=@BorrewedID" /*and borrewed=1*/, connt);
+                            comd = new SQLiteCommand("update book set Copies=(Copies+1), Borrewed=(Borrewed-1),BorrewedTime=@BorrewedTime,TimeToReturn=@TimeToReturn where BorrewedID=@BorrewedID", connt);
                             comd.Parameters.AddWithValue("@BorrewedID", borrewedID);
                             comd.Parameters.AddWithValue("@BorrewedTime", BorrewedTime.HasValue ? (object)BorrewedTime.Value : DBNull.Value);
                             comd.Parameters.AddWithValue("@TimeToReturn", TimeToReturn.HasValue ? (object)TimeToReturn.Value : DBNull.Value);
